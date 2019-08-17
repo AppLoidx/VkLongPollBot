@@ -1,3 +1,5 @@
+import random
+
 import vk_api.vk_api
 
 from vk_api.bot_longpoll import VkBotLongPoll
@@ -35,7 +37,9 @@ class Server:
         :return: None
         """
         return self.vk_api.messages.send(peer_id=send_id,
-                                            message=message)
+                                         message=message,
+                                         random_id=random.randint(0, 2048),
+                                         keyboard=open("keyboards/default.json", "r", encoding="UTF-8").read())
 
     def start(self):
         for event in self.long_poll.listen():   # Слушаем сервер
@@ -47,5 +51,5 @@ class Server:
                 # Пришло новое сообщение
                 if event.type == VkBotEventType.MESSAGE_NEW:
 
-                    self.send_msg(event.object.from_id,
+                    self.send_msg(event.object.peer_id,
                                   self.users[event.object.from_id].input(event.object.text))
